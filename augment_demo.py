@@ -6,9 +6,9 @@ import albumentations as A
 import cv2
 
 # CONFIGURATIONS
-
 SEED = 67
 
+# Only available for previous version lol
 # Affine rotate
 AFFINE_ROTATE_LIMIT = (-15, 15)
 
@@ -49,17 +49,17 @@ boxes = [
 ]
 
 aug_list = [
-    "none",         # 0: None
-    "hflip",        # 1: Horizontalflip
-    "a_scale",      # 2: Affine scale
-    "a_trans",      # 3: Affine translate_percent
-    "a_rot",        # 4: Affine rotate
-    "a_shear",      # 5: Affine shear
-    "clahe",        # 6: CLAHE
-    "griddist",     # 7: GridDistortion
-    "elastrans",    # 8: ElasticTransform
-    "randbright",   # 9: RandomBrightnessContrast
-    "randgamma"     # 10: RandomGamma
+    "none",                 # 0: None
+    "Augmentation_01",      # 1: The Strict Orientation Baseline
+    "Augmentation_02",      # 2: The "Capillary Popper"
+    "Augmentation_03",      # 3: Subtle Contrast & Orientation
+    "Augmentation_04",      # 4: The Saccade Simulator
+    "Augmentation_05",      # 5: Vessel Caliber Variation
+    "Augmentation_06",      # 6: The Topology Stress Test
+    "Augmentation_07",      # 7: High Contrast + Saccade Simulator
+    "Augmentation_08",      # 8: The Conservative Comprehensive
+    "Augmentation_09",      # 9: AggressiveGeometric, Raw Pixels
+    "Augmentation_10"       # 10: The Original "Kitchen Sink"
 ]
 
 # interpolation=cv2.INTER_LINEAR,
@@ -69,58 +69,137 @@ aug_list = [
 # fill_mask=0,
 
 aug_dict = {
-    "none": [A.HorizontalFlip(p=0.0), "None"],
-    "hflip": [A.HorizontalFlip(p=1.0), "HorizontalFlip"],
-    "a_scale": [A.Affine(
+    "none": [[A.HorizontalFlip(p=0.0)], "None"],
+    "Augmentation_01": [[
+        A.HorizontalFlip(p=0.5),
+        A.VerticalFlip(p=0.5)
+        ], "The Strict Orientation Baseline"],
+    "Augmentation_02": [[
+        A.HorizontalFlip(p=0.5),
+        A.VerticalFlip(p=0.5),
+        A.CLAHE(
+            clip_limit=3.0,
+            tile_grid_size=(8,8),
+            p=1.0)
+        ], "The \"Capillary Popper\""],
+    "Augmentation_03": [[
+        A.HorizontalFlip(p=0.5),
+        A.VerticalFlip(p=0.5),
+        A.CLAHE(
+            clip_limit=1.5,
+            tile_grid_size=(8,8),
+            p=0.5)
+        ], "Subtle Contrast & Orientation"],
+    "Augmentation_04": [[
+        A.HorizontalFlip(p=0.5),
+        A.VerticalFlip(p=0.5),
+        A.Affine(
+        translate_percent=(-0.05, 0.05),
+        rotate=(-10, 10),
+        scale=(1.0, 1.0),
+        shear=(0, 0),
+        interpolation=cv2.INTER_LINEAR,
+        mask_interpolation=cv2.INTER_NEAREST,
+        border_mode=cv2.BORDER_REFLECT_101,
+        fill=0,
+        fill_mask=0,
+        p=0.75)
+        ], "The Saccade Simulator"],
+    "Augmentation_05": [[
+        A.HorizontalFlip(p=0.5),
+        A.VerticalFlip(p=0.5),
+        A.Affine(
+        scale=(0.95, 1.05),
+        interpolation=cv2.INTER_LINEAR,
+        mask_interpolation=cv2.INTER_NEAREST,
+        border_mode=cv2.BORDER_REFLECT_101,
+        fill=0,
+        fill_mask=0,
+        p=0.5)
+        ], "Vessel Caliber Variation"],
+    "Augmentation_06": [[
+        A.HorizontalFlip(p=0.5),
+        A.VerticalFlip(p=0.5),
+        A.Affine(
+        shear=(-5, 5),
+        p=0.5)
+        ], "The Topology Stress Test"],
+    "Augmentation_07": [[
+        A.HorizontalFlip(p=0.5),
+        A.VerticalFlip(p=0.5),
+        A.CLAHE(
+            clip_limit=3.0,
+            tile_grid_size=(8,8),
+            p=1.0),
+        A.Affine(
+        translate_percent=(-0.05, 0.05),
+        rotate=(-10, 10),
+        interpolation=cv2.INTER_LINEAR,
+        mask_interpolation=cv2.INTER_NEAREST,
+        border_mode=cv2.BORDER_REFLECT_101,
+        fill=0,
+        fill_mask=0,
+        p=0.75)
+        ], "High Contrast + Saccade Simulator"],
+    "Augmentation_08": [[
+        A.HorizontalFlip(p=0.5),
+        A.VerticalFlip(p=0.5),
+        A.Affine(
+        translate_percent=(-0.05, 0.05),
+        rotate=(-10, 10),
+        scale=(1.0, 1.0),
+        shear=(0, 0),
+        interpolation=cv2.INTER_LINEAR,
+        mask_interpolation=cv2.INTER_NEAREST,
+        border_mode=cv2.BORDER_REFLECT_101,
+        fill=0,
+        fill_mask=0,
+        p=0.3),
+        A.CLAHE(
+            clip_limit=1.5,
+            tile_grid_size=(8,8),
+            p=0.5)
+        ], "The Conservative Comprehensive"],
+    "Augmentation_09": [[
+        A.HorizontalFlip(p=0.5),
+        A.VerticalFlip(p=0.5),
+        A.Affine(
+        scale=(0.9, 1.1),
+        translate_percent=(-0.1, 0.1),
+        rotate=(-15, 15),
+        shear=(0, 0),
+        interpolation=cv2.INTER_LINEAR,
+        mask_interpolation=cv2.INTER_NEAREST,
+        border_mode=cv2.BORDER_REFLECT_101,
+        fill=0,
+        fill_mask=0,
+        p=0.8)
+        ], "AggressiveGeometric, Raw Pixels"],
+    "Augmentation_10": [[
+        A.HorizontalFlip(p=0.5),
+        A.VerticalFlip(p=0.5),
+        A.Affine(
         scale=AFFINE_SCALE_LIMIT,
-        interpolation=cv2.INTER_LINEAR,
-        mask_interpolation=cv2.INTER_NEAREST,
-        border_mode=cv2.BORDER_REFLECT_101,
-        fill=0,
-        fill_mask=0,
-        p=1.0
-    ), "Affine_scale"],
-    "a_trans": [A.Affine(
         translate_percent=AFFINE_TRANSLATE_LIMIT,
-        interpolation=cv2.INTER_LINEAR,
-        mask_interpolation=cv2.INTER_NEAREST,
-        border_mode=cv2.BORDER_REFLECT_101,
-        fill=0,
-        fill_mask=0,
-        p=1.0
-    ), "Affine_translate_percent"],
-    "a_rot": [A.Affine(
         rotate=AFFINE_ROTATE_LIMIT,
-        interpolation=cv2.INTER_LINEAR,
-        mask_interpolation=cv2.INTER_NEAREST,
-        border_mode=cv2.BORDER_REFLECT_101,
-        fill=0,
-        fill_mask=0,
-        p=1.0
-    ), "Affine_rotate"],
-    "a_shear": [A.Affine(
         shear=AFFINE_SHEAR_LIMIT,
         interpolation=cv2.INTER_LINEAR,
         mask_interpolation=cv2.INTER_NEAREST,
         border_mode=cv2.BORDER_REFLECT_101,
         fill=0,
         fill_mask=0,
-        p=1.0
-    ), "Affine_shear"],
-    "clahe": [A.CLAHE(
+        p=0.75,
+        ),
+        A.CLAHE(
         clip_limit=CLAHE_CLIP_LIMIT,
         tile_grid_size=CLAHE_TILE_GRID_SIZE,
-        p=1.0
-    ), "CLAHE"],
-    "griddist": [A.GridDistortion(num_steps=GRID_STEPS, distort_limit=GRID_DISTORT_LIMIT, p=1.0), "GridDistortion"],
-    "elastrans": [A.ElasticTransform(alpha=ELAS_ALPHA, sigma=ELAS_SIGMA, alpha_affine=ELAS_ALPHA_AFFINE, p=1.0), "ElasticTransform"],
-    "randbright": [A.RandomBrightnessContrast(brightness_limit=BRIGHT_LIMIT,contrast_limit=BRIGHT_CONTRAST_LIMIT, p=1.0), "RandomBrightnessContrast"],
-    "randgamma": [A.RandomGamma(gamma_limit=GAMMA_LIMIT, p=1.0), "RandomGamma"]
+        p=0.5)
+        ], "The Original \"Kitchen Sink\""]
 }
 
 def process(index_list, dataset, augmentation="none"):
     aug_name = aug_dict[augmentation][1]
-    Path(f"processed/{dataset}/{aug_name}").mkdir(parents=True, exist_ok=True)
+    Path(f"processed/{dataset}/{augmentation}").mkdir(parents=True, exist_ok=True)
 
     print(50*"=")
     print(f"Process: {aug_name}")
@@ -155,11 +234,11 @@ def process(index_list, dataset, augmentation="none"):
             ax.axis("off")
 
         print(f"Saving combined images")
-        fig.savefig(f"processed/{dataset}/{aug_name}/{index}.png", dpi=150, bbox_inches="tight")
+        fig.savefig(f"processed/{dataset}/{augmentation}/{index}.png", dpi=150, bbox_inches="tight")
         plt.close(fig)
         if augmentation != "none":
             def_image = Image.open(f"processed/{dataset}/None/{index}.png")
-            temp_image = Image.open(f"processed/{dataset}/{aug_name}/{index}.png")
+            temp_image = Image.open(f"processed/{dataset}/{augmentation}/{index}.png")
             sequence = [def_image, temp_image]
 
             sum_fig = plt.figure(layout='constrained')
@@ -175,12 +254,12 @@ def process(index_list, dataset, augmentation="none"):
             aug_fig.axis("off")
 
             print("Saving summary image")
-            sum_fig.savefig(f"processed/{dataset}/{aug_name}/{index}_summary.png", dpi=300, bbox_inches="tight")
+            sum_fig.savefig(f"processed/{dataset}/{augmentation}/{index}_summary.png", dpi=300, bbox_inches="tight")
             plt.close(sum_fig)
 
             print("Saving gif")
             sequence[0].save(
-                f"processed/{dataset}/{aug_name}/{index}.gif",
+                f"processed/{dataset}/{augmentation}/{index}.gif",
                 append_images=sequence[1:],
                 duration=500,
                 loop=0,
@@ -188,7 +267,7 @@ def process(index_list, dataset, augmentation="none"):
 
 def apply_aug(im, ma, augmentation):
     transform_temp, transform_name = aug_dict[augmentation]
-    transform = A.Compose([transform_temp], seed=SEED)
+    transform = A.Compose(transform_temp, seed=SEED)
 
     im_array = np.asarray(im, dtype=np.uint8)
     ma_array = np.asarray(ma, dtype=np.uint8)

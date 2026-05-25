@@ -18,8 +18,8 @@ augment_demo/
         ...
 
     processed/tu/
-        Affine_rotate
-        Affine_scale
+        Augmentation_01
+        Augmentation_02
         ...
 
     .gitignore
